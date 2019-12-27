@@ -997,7 +997,7 @@ function getDate(timezone, elem, lang) {
 }
 
 function getDateByCoords(lat, lng, elem, lang) {
-  fetch("http://api.timezonedb.com/v2.1/get-time-zone?key=ST1WDEJRNQDM&format=json&by=position&lat=".concat(lat, "&lng=").concat(lng)).then(function (res) {
+  fetch("https://api.timezonedb.com/v2.1/get-time-zone?key=ST1WDEJRNQDM&format=json&by=position&lat=".concat(lat, "&lng=").concat(lng)).then(function (res) {
     return res.json();
   }).then(function (data) {
     var date = new Date(data.formatted);

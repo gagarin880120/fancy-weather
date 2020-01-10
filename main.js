@@ -1083,9 +1083,16 @@ buttonContainer.append(celsiusBtn);
 var searchContainer = document.createElement('div');
 searchContainer.className = 'navbar--item--container';
 navBar.append(searchContainer);
+var voiceBtn = document.createElement('button');
+voiceBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+voiceBtn.className = 'navbar--item voice_button';
+searchContainer.appendChild(voiceBtn);
+var pulsatingCircle = document.createElement('div');
+pulsatingCircle.className = 'pulsating_circle';
+searchContainer.appendChild(pulsatingCircle);
 var searchInput = document.createElement('input');
 searchInput.type = 'search';
-searchInput.placeholder = 'Enter or say city name 🎤';
+searchInput.placeholder = 'Enter city name';
 searchInput.className = 'search_input';
 searchContainer.append(searchInput);
 var searchBtn = document.createElement('button');
@@ -1402,10 +1409,13 @@ function getVoice() {
     searchInput.value = transcript;
     getCoords();
   });
-  recognition.addEventListener('end', function () {
+  voiceBtn.addEventListener('click', function () {
     recognition.start();
+    pulsatingCircle.style.display = 'block';
   });
-  recognition.start();
+  recognition.addEventListener('end', function () {
+    pulsatingCircle.style.display = 'none';
+  });
 }
 
 reloadImageBtn.addEventListener('click', function () {
@@ -1415,48 +1425,36 @@ langSelect.addEventListener('change', function () {
   if (!searchMode) {
     if (langSelect.value === 'rus') {
       currLang = 'rus';
-      localStorage.setItem('currLang', currLang);
-      clearInterval(defaultDateInterval);
-      getIPAddress();
-      getCoords();
     }
 
     if (langSelect.value === 'bel') {
       currLang = 'bel';
-      localStorage.setItem('currLang', currLang);
-      clearInterval(defaultDateInterval);
-      getIPAddress();
-      getCoords();
     }
 
     if (langSelect.value === 'eng') {
       currLang = 'eng';
-      localStorage.setItem('currLang', currLang);
-      clearInterval(defaultDateInterval);
-      getIPAddress();
-      getCoords();
     }
+
+    localStorage.setItem('currLang', currLang);
+    clearInterval(defaultDateInterval);
+    getIPAddress();
+    getCoords();
   } else {
     if (langSelect.value === 'rus') {
       currLang = 'rus';
-      localStorage.setItem('currLang', currLang);
-      clearInterval(currentDateInterval);
-      getCoords();
     }
 
     if (langSelect.value === 'bel') {
       currLang = 'bel';
-      localStorage.setItem('currLang', currLang);
-      clearInterval(currentDateInterval);
-      getCoords();
     }
 
     if (langSelect.value === 'eng') {
       currLang = 'eng';
-      localStorage.setItem('currLang', currLang);
-      clearInterval(currentDateInterval);
-      getCoords();
     }
+
+    localStorage.setItem('currLang', currLang);
+    clearInterval(currentDateInterval);
+    getCoords();
   }
 });
 fahrenheitBtn.addEventListener('click', function () {
@@ -1499,38 +1497,27 @@ document.addEventListener('keydown', function (event) {
     }
   }
 });
+window.addEventListener('load', function () {
+  var currentLang = localStorage.getItem('currLang');
+  var temperature = localStorage.getItem('tempMode');
 
-window.onload = function () {
-  if (!localStorage.getItem('currLang') && !localStorage.getItem('tempMode')) {
+  if (!currentLang && !temperature) {
     localStorage.clear();
-    getCoords();
-    getIPAddress();
-    getVoice();
   }
 
-  if (localStorage.getItem('currLang')) {
-    currLang = localStorage.getItem('currLang');
+  if (currentLang) {
+    currLang = currentLang;
     langSelect.value = currLang;
-    getCoords();
-    getIPAddress();
-    getVoice();
   }
 
-  if (localStorage.getItem('tempMode')) {
-    tempMode = localStorage.getItem('tempMode');
-    getCoords();
-    getIPAddress();
-    getVoice();
+  if (temperature) {
+    tempMode = temperature;
   }
 
-  if (localStorage.getItem('currLang') && localStorage.getItem('tempMode')) {
-    langSelect.value = currLang;
-    tempMode = localStorage.getItem('tempMode');
-    getCoords();
-    getIPAddress();
-    getVoice();
-  }
-};
+  getCoords();
+  getIPAddress();
+  getVoice();
+});
 
 /***/ })
 /******/ ]);

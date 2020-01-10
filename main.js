@@ -980,7 +980,7 @@ function getDate(timezone, elem, lang) {
   var result = date.toLocaleString('en-GB', {
     month: 'long',
     day: 'numeric',
-    weekday: 'short',
+    weekday: 'long',
     hour: '2-digit',
     minute: '2-digit',
     timeZone: timezone
@@ -1004,7 +1004,7 @@ function getDateByCoords(lat, lng, elem, lang) {
     elem.text = date.toLocaleString('en-GB', {
       month: 'long',
       day: 'numeric',
-      weekday: 'short',
+      weekday: 'long',
       hour: '2-digit',
       minute: '2-digit'
     }).replace(',', '').replace(',', '');
@@ -1041,7 +1041,6 @@ function getCityfromCoords(data) {
 
 
 // CONCATENATED MODULE: ./src/index.js
-// eslint-disable-next-line no-unused-vars
 
 
 
@@ -1050,13 +1049,13 @@ var currLang = 'eng';
 var tempMode = 'celsius';
 var searchMode = false;
 var defaultDateInterval;
-var currentDateInterval;
-var bodyWrapper = document.createElement('div');
-bodyWrapper.className = 'body-wrapper';
-document.body.append(bodyWrapper);
+var currentDateInterval; // const bodyWrapper = document.createElement('div');
+// bodyWrapper.className = 'body-wrapper';
+// document.body.append(bodyWrapper);
+
 var appWrapper = document.createElement('div');
 appWrapper.className = 'app-wrapper';
-bodyWrapper.append(appWrapper);
+document.body.append(appWrapper);
 var navBar = document.createElement('nav');
 navBar.className = 'navbar';
 appWrapper.append(navBar);
@@ -1073,11 +1072,11 @@ langSelect.innerHTML = '<option value="eng">EN</option>' + '<option value="rus">
 langSelect.value = 'eng';
 buttonContainer.append(langSelect);
 var fahrenheitBtn = document.createElement('button');
-fahrenheitBtn.className = 'navbar--item';
+fahrenheitBtn.className = 'navbar--item fahrenheit';
 fahrenheitBtn.innerText = '°F';
 buttonContainer.append(fahrenheitBtn);
 var celsiusBtn = document.createElement('button');
-celsiusBtn.className = 'navbar--item';
+celsiusBtn.className = 'navbar--item celsius';
 celsiusBtn.innerText = '°C';
 buttonContainer.append(celsiusBtn);
 var searchContainer = document.createElement('div');
@@ -1288,7 +1287,7 @@ function getIPAddress() {
     getDate(data.timezone, currentDate, currLang);
     defaultDateInterval = setInterval(getDate, 15000, data.timezone, currentDate, currLang);
     currentCity.text = "".concat(data.city, ", ").concat(convertCountryCode(data.country));
-    getBackgroundImage(bodyWrapper, currentDate, currentWeatherSummary);
+    getBackgroundImage(document.body, currentDate, currentWeatherSummary);
 
     if (currLang === 'rus') {
       translate(currentCity, 'en-ru');
@@ -1361,7 +1360,7 @@ function getCoords() {
       getDateByCoords(lat, lng, currentDate, currLang);
       currentDateInterval = setInterval(getDateByCoords, 15000, lat, lng, currentDate, currLang);
       currentCity.text = "".concat(getCityfromCoords(data), ", ").concat(convertCountryCode(data.results[0].components['ISO_3166-1_alpha-2']));
-      getBackgroundImage(bodyWrapper, currentDate, currentWeatherSummary);
+      getBackgroundImage(document.body, currentDate, currentWeatherSummary);
 
       if (currLang === 'rus') {
         translate(currentCity, 'en-ru');
@@ -1419,7 +1418,7 @@ function getVoice() {
 }
 
 reloadImageBtn.addEventListener('click', function () {
-  getBackgroundImage(bodyWrapper, currentDate, currentWeatherSummary);
+  getBackgroundImage(document.body, currentDate, currentWeatherSummary);
 });
 langSelect.addEventListener('change', function () {
   if (!searchMode) {
@@ -1457,12 +1456,22 @@ langSelect.addEventListener('change', function () {
     getCoords();
   }
 });
+
+function toggleActiveTempMode(mode) {
+  if (document.querySelector('.active_temp_mode')) {
+    document.querySelector('.active_temp_mode').classList.remove('active_temp_mode');
+  }
+
+  document.querySelector(".".concat(mode)).classList.toggle('active_temp_mode');
+}
+
 fahrenheitBtn.addEventListener('click', function () {
   if (tempMode === 'fahrenheit') {
     return;
   }
 
   tempMode = 'fahrenheit';
+  toggleActiveTempMode(tempMode);
   localStorage.setItem('tempMode', tempMode);
   convertToFahrenheit(currentTemp);
   convertToFahrenheit(apparentTempVal);
@@ -1476,6 +1485,7 @@ celsiusBtn.addEventListener('click', function () {
   }
 
   tempMode = 'celsius';
+  toggleActiveTempMode(tempMode);
   localStorage.setItem('tempMode', tempMode);
   convertToCelsius(currentTemp);
   convertToCelsius(apparentTempVal);
@@ -1514,6 +1524,7 @@ window.addEventListener('load', function () {
     tempMode = temperature;
   }
 
+  toggleActiveTempMode(tempMode);
   getCoords();
   getIPAddress();
   getVoice();
